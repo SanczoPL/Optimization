@@ -1,0 +1,21 @@
+[submodule "PostProcessingModules"]
+	path = PostProcessingModules
+	url = https://github.com/SanczoPL/PostProcessingModules
+[submodule "DataManagement"]
+	path = DataManagement
+	url = https://github.com/SanczoPL/DataManagement.git
+[submodule "ProcessingGraph"]
+	path = ProcessingGraph
+	url = https://github.com/SanczoPL/ProcessingGraph
+[submodule "Utils"]
+	path = Utils
+	url = https://github.com/SanczoPL/Utils
+[submodule "ProcessingModules"]
+	path = ProcessingModules
+	url = https://github.com/SanczoPL/ProcessingModules
+[submodule "GeneticOptimizationModule"]
+	path = GeneticOptimizationModule
+	url = https://github.com/SanczoPL/GeneticOptimizationModule.git
+[submodule "DlibModule"]
+	path = DlibModule
+	url = https://github.com/SanczoPL/DlibModule
