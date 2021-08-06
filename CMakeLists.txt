@@ -43,6 +43,16 @@ copy_json("DlibModule/configs/dataset.json")
 copy_json("GeneticOptimizationModule/configs/config.json")
 copy_json("GeneticOptimizationModule/configs/preprocess.json")
 
+copy_json("GeneticOptimizationModule/gtest/test_addmultipledron.json")
+copy_json("GeneticOptimizationModule/gtest/test.json")
+
+copy_json("GeneticOptimizationModule/gtest_it/test_dataset.json")
+copy_json("GeneticOptimizationModule/gtest_it/test_graph_config_postprocesssing.json")
+copy_json("GeneticOptimizationModule/gtest_it/test_graph_config.json")
+copy_json("GeneticOptimizationModule/gtest_it/test_graph_postprocessing.json")
+copy_json("GeneticOptimizationModule/gtest_it/test_graph.json")
+copy_json("GeneticOptimizationModule/gtest_it/test_preprocess.json")
+
 include_directories( "DlibModule/include" )
 include_directories( "GeneticOptimizationModule/include" )
 include_directories( "PostProcessingModules/include" )
@@ -50,6 +60,8 @@ include_directories( "ProcessingModules/include" )
 include_directories( "DataManagement/include" )
 include_directories( "ProcessingGraph/include" )
 include_directories( "Utils/include" )
+include_directories( "ProcessingModules/src/Subtractor/subtractors" )
+
 
 if (WIN32)
 	set(QT5_PATH  "E:\\Qt\\5.15.2\\msvc2019_64")
@@ -87,12 +99,12 @@ macro(clone_build libname)
 endmacro()
 
 clone_build(spdlog)
+clone_build(googletest)
+# Prevent GoogleTest from overriding our compiler/linker options
+# when building with Visual Studio
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
 if (WIN32)
-	clone_build(googletest)
-	# Prevent GoogleTest from overriding our compiler/linker options
-	# when building with Visual Studio
-	set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 	clone_build(dlib)
 endif (WIN32)
 
@@ -125,8 +137,6 @@ add_library(data_lib STATIC
 
 add_library(graph_lib STATIC
 	${SRC_GRAPH} ${HEADERS_GRAPH})
-
-
 
 message(" cv_libs:     " ${OpenCV_LIBS})
 message(" cv_includes: " ${OPENCV_INCLUDE_DIRS})
@@ -182,6 +192,24 @@ if (UNIX)
 	target_link_libraries(${PROJECT_NAME}_genetic_train_test_lib X11)
 endif (UNIX)
 target_link_libraries(${PROJECT_NAME}_genetic_train_test ${PROJECT_NAME}_genetic_train_test_lib)
+
+##### Genetic tests:
+file(GLOB_RECURSE SRC_HEADERS_TEST GeneticOptimizationModule/gtest/*.cc GeneticOptimizationModule/gtest/*.h)
+file(GLOB_RECURSE SRC_HEADERS_TEST_IT GeneticOptimizationModule/gtest_it/*.cc GeneticOptimizationModule/gtest_it/*.h)
+
+add_executable(g_test ${SRC_HEADERS_TEST})
+add_executable(g_test_it ${SRC_HEADERS_TEST_IT})
+
+
+target_link_libraries(g_test ${PROJECT_NAME}_genetic_train_test_lib gtest gmock )
+target_link_libraries(g_test_it ${PROJECT_NAME}_genetic_train_test_lib gtest gmock)
+
+
+##### Test median2:
+set(SRC_TEST_MEDIAN2
+	GeneticOptimizationModule/test_median2/main.cc)
+add_executable(median2 ${SRC_TEST_MEDIAN2})
+target_link_libraries(median2 ${PROJECT_NAME}_genetic_train_test_lib)
 
 message("CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE} ")
 
