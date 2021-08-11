@@ -55,12 +55,16 @@ copy_json("GeneticOptimizationModule/gtest_it/test_preprocess.json")
 
 include_directories( "DlibModule/include" )
 include_directories( "GeneticOptimizationModule/include" )
+include_directories( "GeneticOptimizationModule/gtest" )
+include_directories( "GeneticOptimizationModule/gtest_it" )
 include_directories( "PostProcessingModules/include" )
 include_directories( "ProcessingModules/include" )
 include_directories( "DataManagement/include" )
 include_directories( "ProcessingGraph/include" )
 include_directories( "Utils/include" )
 include_directories( "ProcessingModules/src/Subtractor/subtractors" )
+include_directories( "ProcessingModules/src/Filter" )
+
 
 
 if (WIN32)
@@ -138,12 +142,20 @@ add_library(data_lib STATIC
 add_library(graph_lib STATIC
 	${SRC_GRAPH} ${HEADERS_GRAPH})
 
+add_library(${PROJECT_NAME}_processing_lib
+	${SRC_PROCESSING} ${HEADERS_PROCESSING})
+
+add_library(${PROJECT_NAME}_postprocessing_lib
+	${SRC_POST_PROCESSING} ${HEADERS_POST_PROCESSING})
+
 message(" cv_libs:     " ${OpenCV_LIBS})
 message(" cv_includes: " ${OPENCV_INCLUDE_DIRS})
 
 target_link_libraries(utils_lib ${QT_LIBRARIES} spdlog Qt5::Core Threads::Threads)
 target_link_libraries(data_lib ${QT_LIBRARIES} spdlog Qt5::Core ${OpenCV_LIBS} Threads::Threads)
 target_link_libraries(graph_lib ${QT_LIBRARIES} spdlog Qt5::Core ${OpenCV_LIBS} Threads::Threads)
+target_link_libraries(${PROJECT_NAME}_processing_lib ${QT_LIBRARIES} spdlog Qt5::Core ${OpenCV_LIBS} Threads::Threads)
+target_link_libraries(${PROJECT_NAME}_postprocessing_lib ${QT_LIBRARIES} spdlog Qt5::Core ${OpenCV_LIBS} Threads::Threads)
 
 ##### DLIB MODULE:
 set(SRC_DLIB_MODULE_MAIN DlibModule/main.cc)
@@ -153,14 +165,13 @@ DlibModule/include/train/*.h
 DlibModule/include/network/*.h)
 
 add_library(${PROJECT_NAME}_dlib_train_test_lib STATIC
-	${SRC_PROCESSING} ${HEADERS_PROCESSING} 
-	${SRC_POST_PROCESSING} ${HEADERS_POST_PROCESSING} 
 	${SRC_DLIB_MODULE})
 
 add_executable(${PROJECT_NAME}_dlib_train_test
     ${SRC_DLIB_MODULE_MAIN})
 
 target_link_libraries(${PROJECT_NAME}_dlib_train_test_lib utils_lib data_lib graph_lib dlib::dlib)
+target_link_libraries(${PROJECT_NAME}_dlib_train_test_lib ${PROJECT_NAME}_processing_lib ${PROJECT_NAME}_postprocessing_lib)
 target_link_libraries(${PROJECT_NAME}_dlib_train_test ${PROJECT_NAME}_dlib_train_test_lib)
 
 ##### Genetic:
@@ -180,14 +191,13 @@ set(HEADERS_GENETIC
 	GeneticOptimizationModule/include/genetic/structures.h)
 
 add_library(${PROJECT_NAME}_genetic_train_test_lib STATIC
-	${SRC_GENETIC} ${HEADERS_GENETIC} 
-	${SRC_PROCESSING} ${HEADERS_PROCESSING}
-	${SRC_POST_PROCESSING} ${HEADERS_POST_PROCESSING})
+	${SRC_GENETIC} ${HEADERS_GENETIC})
 
 add_executable(${PROJECT_NAME}_genetic_train_test
     ${SRC_GENETIC_MAIN})
 
 target_link_libraries(${PROJECT_NAME}_genetic_train_test_lib utils_lib data_lib graph_lib)
+target_link_libraries(${PROJECT_NAME}_genetic_train_test_lib ${PROJECT_NAME}_processing_lib ${PROJECT_NAME}_postprocessing_lib)
 if (UNIX)
 	target_link_libraries(${PROJECT_NAME}_genetic_train_test_lib X11)
 endif (UNIX)
