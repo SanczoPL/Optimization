@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
 project(optimization VERSION 0.0.1 DESCRIPTION "DlibNetwork with GeneticOptimization v1.0" LANGUAGES C CXX)
 
-#set(DEFAULT_BUILD_TYPE "Debug")
+set(DEFAULT_BUILD_TYPE "Debug")
 #set(CMAKE_BUILD_TYPE "Debug")
 
 set(DEFAULT_BUILD_TYPE "Release")
-set(CMAKE_BUILD_TYPE "Release")
+#set(CMAKE_BUILD_TYPE "Release")
 
 #STNDARD STUFF
 set(CMAKE_CXX_STANDARD 17)
