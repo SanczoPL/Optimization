@@ -3264,3 +3264,7 @@ build/optimization_processing_lib_autogen/BWQ3HTD42K/moc_processing.cpp
 build/optimization_processing_lib_autogen/IQSKDJ5PMD/moc_adder.cpp
 build/optimization_processing_lib_autogen/QY5UEF32AS/moc_filter.cpp
 build/spdlog-build/libspdlog.a
+build/g_test.dir/Release/g_test.exe.recipe
+build/g_test.dir/Release/gtest_filter_custom_addmultipledron.obj
+build/g_test.dir/Release/gtest_filter_median_impl_2.obj
+build/g_test.dir/Release/g_test.tlog/link.write.1.tlog
