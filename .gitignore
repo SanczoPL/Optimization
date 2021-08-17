@@ -3268,3 +3268,4 @@ build/g_test.dir/Release/g_test.exe.recipe
 build/g_test.dir/Release/gtest_filter_custom_addmultipledron.obj
 build/g_test.dir/Release/gtest_filter_median_impl_2.obj
 build/g_test.dir/Release/g_test.tlog/link.write.1.tlog
+build/optimization_dlib_train_test.dir/Release/optimiza.B3538E64.tlog/unsuccessfulbuild
