@@ -88,7 +88,7 @@ find_package(Qt5Test REQUIRED)
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 find_package(OpenCV QUIET COMPONENTS core highgui imgproc imgcodecs videoio)
-find_package(dlib REQUIRED)
+
 
 enable_testing()
 
@@ -111,6 +111,8 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 if (WIN32)
 	clone_build(dlib)
 endif (WIN32)
+
+#find_package(dlib REQUIRED)
 
 file(GLOB_RECURSE SRC_UTILS Utils/src/*.cc)
 file(GLOB_RECURSE HEADERS_UTILS Utils/include/*.h)
