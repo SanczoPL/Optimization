@@ -109,9 +109,9 @@ clone_build(googletest)
 # when building with Visual Studio
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
-if (WIN32)
-	clone_build(dlib)
-endif (WIN32)
+
+clone_build(dlib)
+
 
 #find_package(dlib REQUIRED)
 
