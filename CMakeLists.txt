@@ -296,5 +296,8 @@ if (WIN32)
 		COMMAND ${CMAKE_COMMAND} -E copy_if_different  ${OpenCV_DIR}/bin/${CMAKE_BUILD_TYPE}/opencv_gapi${OPENCV_VERSION_WINDOWS}${OPENCV_PREFIX_BUILD_TYPE}.dll   ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/
 
 		COMMAND ${CMAKE_COMMAND} -E copy_if_different  ${OpenCV_DIR}/bin/${CMAKE_BUILD_TYPE}/opencv_videoio_ffmpeg${OPENCV_VERSION_WINDOWS}_64.dll   ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different  ${OpenCV_DIR}/bin/${CMAKE_BUILD_TYPE}/opencv_cudev${OPENCV_VERSION_WINDOWS}.dll   ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different  ${OpenCV_DIR}/bin/${CMAKE_BUILD_TYPE}/opencv_structured_light${OPENCV_VERSION_WINDOWS}.dll   ${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/
+			
 	)
 endif(WIN32)
