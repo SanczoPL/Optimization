@@ -17,7 +17,7 @@ if (UNIX)
 endif (UNIX)
 
 if (WIN32)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /O2" )
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP /O2 /MD" )
 endif (WIN32)
 
 set(TARGET_NAME "optimization")
