@@ -7,6 +7,8 @@ set(DEFAULT_BUILD_TYPE "Debug")
 set(DEFAULT_BUILD_TYPE "Release")
 #set(CMAKE_BUILD_TYPE "Release")
 
+#set(CMAKE_BUILD_TYPE "Debug")
+
 #STNDARD STUFF
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -43,8 +45,10 @@ copy_json("DlibModule/configs/dataset.json")
 copy_json("GeneticOptimizationModule/configs/config.json")
 copy_json("GeneticOptimizationModule/configs/preprocess.json")
 
-copy_json("GeneticOptimizationModule/gtest/test_addmultipledron.json")
-copy_json("GeneticOptimizationModule/gtest/test.json")
+copy_json("ProcessingModules/gtest/test_addmultipledron.json")
+copy_json("ProcessingModules/gtest/test_viterbi.json")
+copy_json("ProcessingModules/gtest/test.json")
+
 
 copy_json("GeneticOptimizationModule/gtest_it/test_dataset.json")
 copy_json("GeneticOptimizationModule/gtest_it/test_graph_config_postprocesssing.json")
@@ -130,11 +134,11 @@ set(HEADERS_DATA
 	DataManagement/include/loaddata.h
 )
 
-file(GLOB_RECURSE SRC_PROCESSING ProcessingModules/*.cc)
-file(GLOB_RECURSE HEADERS_PROCESSING ProcessingModules/*.h)
+file(GLOB_RECURSE SRC_PROCESSING ProcessingModules/src/*.cc)
+file(GLOB_RECURSE HEADERS_PROCESSING ProcessingModules/include/*.h)
 
-file(GLOB_RECURSE SRC_POST_PROCESSING PostProcessingModules/*.cc)
-file(GLOB_RECURSE HEADERS_POST_PROCESSING PostProcessingModules/*.h)
+file(GLOB_RECURSE SRC_POST_PROCESSING PostProcessingModules/src/*.cc)
+file(GLOB_RECURSE HEADERS_POST_PROCESSING PostProcessingModules/include/*.h)
 
 add_library(utils_lib STATIC
 	${SRC_UTILS} ${HEADERS_UTILS})
@@ -145,20 +149,20 @@ add_library(data_lib STATIC
 add_library(graph_lib STATIC
 	${SRC_GRAPH} ${HEADERS_GRAPH})
 
-add_library(${PROJECT_NAME}_processing_lib
+add_library(processing_lib
 	${SRC_PROCESSING} ${HEADERS_PROCESSING})
 
-add_library(${PROJECT_NAME}_postprocessing_lib
+add_library(postprocessing_lib
 	${SRC_POST_PROCESSING} ${HEADERS_POST_PROCESSING})
 
 message(" cv_libs:     " ${OpenCV_LIBS})
 message(" cv_includes: " ${OPENCV_INCLUDE_DIRS})
 
 target_link_libraries(utils_lib ${QT_LIBRARIES} spdlog Qt5::Core Threads::Threads)
-target_link_libraries(data_lib ${QT_LIBRARIES} spdlog Qt5::Core ${OpenCV_LIBS} Threads::Threads)
-target_link_libraries(graph_lib ${QT_LIBRARIES} spdlog Qt5::Core ${OpenCV_LIBS} Threads::Threads)
-target_link_libraries(${PROJECT_NAME}_processing_lib ${QT_LIBRARIES} spdlog Qt5::Core ${OpenCV_LIBS} Threads::Threads)
-target_link_libraries(${PROJECT_NAME}_postprocessing_lib ${QT_LIBRARIES} spdlog Qt5::Core ${OpenCV_LIBS} Threads::Threads)
+target_link_libraries(processing_lib ${QT_LIBRARIES} spdlog Qt5::Core ${OpenCV_LIBS} Threads::Threads)
+target_link_libraries(postprocessing_lib ${QT_LIBRARIES} spdlog Qt5::Core ${OpenCV_LIBS} Threads::Threads)
+target_link_libraries(graph_lib ${QT_LIBRARIES} spdlog Qt5::Core ${OpenCV_LIBS} Threads::Threads utils_lib processing_lib postprocessing_lib)
+target_link_libraries(data_lib ${QT_LIBRARIES} spdlog Qt5::Core ${OpenCV_LIBS} Threads::Threads graph_lib utils_lib)
 
 ##### DLIB MODULE:
 set(SRC_DLIB_MODULE_MAIN DlibModule/main.cc)
@@ -174,7 +178,7 @@ add_executable(${PROJECT_NAME}_dlib_train_test
     ${SRC_DLIB_MODULE_MAIN})
 
 target_link_libraries(${PROJECT_NAME}_dlib_train_test_lib utils_lib data_lib graph_lib dlib::dlib)
-target_link_libraries(${PROJECT_NAME}_dlib_train_test_lib ${PROJECT_NAME}_processing_lib ${PROJECT_NAME}_postprocessing_lib)
+target_link_libraries(${PROJECT_NAME}_dlib_train_test_lib processing_lib postprocessing_lib)
 target_link_libraries(${PROJECT_NAME}_dlib_train_test ${PROJECT_NAME}_dlib_train_test_lib)
 
 ##### Genetic:
@@ -200,29 +204,38 @@ add_executable(${PROJECT_NAME}_genetic_train_test
     ${SRC_GENETIC_MAIN})
 
 target_link_libraries(${PROJECT_NAME}_genetic_train_test_lib utils_lib data_lib graph_lib)
-target_link_libraries(${PROJECT_NAME}_genetic_train_test_lib ${PROJECT_NAME}_processing_lib ${PROJECT_NAME}_postprocessing_lib)
+target_link_libraries(${PROJECT_NAME}_genetic_train_test_lib processing_lib postprocessing_lib)
 if (UNIX)
 	target_link_libraries(${PROJECT_NAME}_genetic_train_test_lib X11)
 endif (UNIX)
 target_link_libraries(${PROJECT_NAME}_genetic_train_test ${PROJECT_NAME}_genetic_train_test_lib)
 
 ##### Genetic tests:
-file(GLOB_RECURSE SRC_HEADERS_TEST GeneticOptimizationModule/gtest/*.cc GeneticOptimizationModule/gtest/*.h)
-file(GLOB_RECURSE SRC_HEADERS_TEST_IT GeneticOptimizationModule/gtest_it/*.cc GeneticOptimizationModule/gtest_it/*.h)
+file(GLOB_RECURSE SRC_HEADERS_TEST_GENETIC
+	GeneticOptimizationModule/gtest_it/*.cc GeneticOptimizationModule/gtest_it/*.h)
+#file(GLOB_RECURSE SRC_HEADERS_TEST_IT GeneticOptimizationModule/gtest_it/*.cc GeneticOptimizationModule/gtest_it/*.h)
 
-add_executable(g_test ${SRC_HEADERS_TEST})
-add_executable(g_test_it ${SRC_HEADERS_TEST_IT})
+##### ProcessingModules tests:
+file(GLOB_RECURSE SRC_HEADERS_TEST_PROCESSING_MODULE 
+	ProcessingModules/gtest/*.cc ProcessingModules/gtest/*.h)
+#file(GLOB_RECURSE SRC_HEADERS_TEST_IT ProcessingModules/gtest_it/*.cc ProcessingModules/gtest_it/*.h)
 
 
-target_link_libraries(g_test ${PROJECT_NAME}_genetic_train_test_lib gtest gmock )
-target_link_libraries(g_test_it ${PROJECT_NAME}_genetic_train_test_lib gtest gmock)
+add_executable(g_test_genetic ${SRC_HEADERS_TEST_GENETIC})
+add_executable(g_test_processing_modules ${SRC_HEADERS_TEST_PROCESSING_MODULE})
+
+#add_executable(g_test_it ${SRC_HEADERS_TEST_IT})
+
+
+target_link_libraries(g_test_genetic ${PROJECT_NAME}_genetic_train_test_lib utils_lib gtest gmock )
+target_link_libraries(g_test_processing_modules processing_lib utils_lib data_lib gtest gmock )
+#target_link_libraries(g_test_it ${PROJECT_NAME}_genetic_train_test_lib utils_lib gtest gmock)
 
 
 ##### Test median2:
-set(SRC_TEST_MEDIAN2
-	GeneticOptimizationModule/test_median2/main.cc)
-add_executable(median2 ${SRC_TEST_MEDIAN2})
-target_link_libraries(median2 ${PROJECT_NAME}_genetic_train_test_lib)
+#set(SRC_TEST_MEDIAN2 GeneticOptimizationModule/test_median2/main.cc)
+#add_executable(median2 ${SRC_TEST_MEDIAN2})
+#target_link_libraries(median2 ${PROJECT_NAME}_genetic_train_test_lib)
 
 message("CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE} ")
 
