@@ -7,7 +7,7 @@ set(DEFAULT_BUILD_TYPE "Debug")
 set(DEFAULT_BUILD_TYPE "Release")
 #set(CMAKE_BUILD_TYPE "Release")
 
-#set(CMAKE_BUILD_TYPE "Debug")
+set(CMAKE_BUILD_TYPE "Release")
 
 #STNDARD STUFF
 set(CMAKE_CXX_STANDARD 17)
@@ -49,6 +49,14 @@ copy_json("ProcessingModules/gtest/test_addmultipledron.json")
 copy_json("ProcessingModules/gtest/test_viterbi.json")
 copy_json("ProcessingModules/gtest/test.json")
 
+copy_json("ProcessingModules/gtest_it/test_bounds.json")
+copy_json("ProcessingModules/gtest_it/test_config.json")
+copy_json("ProcessingModules/gtest_it/test_dataset.json")
+copy_json("ProcessingModules/gtest_it/test_graph.json")
+copy_json("ProcessingModules/gtest_it/test_graph_config.json")
+copy_json("ProcessingModules/gtest_it/test_postprocess.json")
+copy_json("ProcessingModules/gtest_it/test_preprocess.json")
+
 
 copy_json("GeneticOptimizationModule/gtest_it/test_dataset.json")
 copy_json("GeneticOptimizationModule/gtest_it/test_graph_config_postprocesssing.json")
@@ -56,6 +64,7 @@ copy_json("GeneticOptimizationModule/gtest_it/test_graph_config.json")
 copy_json("GeneticOptimizationModule/gtest_it/test_graph_postprocessing.json")
 copy_json("GeneticOptimizationModule/gtest_it/test_graph.json")
 copy_json("GeneticOptimizationModule/gtest_it/test_preprocess.json")
+
 
 include_directories( "DlibModule/include" )
 include_directories( "GeneticOptimizationModule/include" )
@@ -122,8 +131,8 @@ clone_build(dlib)
 file(GLOB_RECURSE SRC_UTILS Utils/src/*.cc)
 file(GLOB_RECURSE HEADERS_UTILS Utils/include/*.h)
 
-set(SRC_GRAPH ProcessingGraph/src/graph.cc)
-set(HEADERS_GRAPH ProcessingGraph/include/graph.h)
+set(SRC_GRAPH ProcessingGraph/src/graph.cc ProcessingGraph/src/case.cc)
+set(HEADERS_GRAPH ProcessingGraph/include/graph.h ProcessingGraph/include/case.h)
 
 set(SRC_DATA
 	DataManagement/src/data.cc
@@ -185,13 +194,11 @@ target_link_libraries(${PROJECT_NAME}_dlib_train_test ${PROJECT_NAME}_dlib_train
 set(SRC_GENETIC_MAIN GeneticOptimizationModule/main.cc)
 
 set(SRC_GENETIC
-	GeneticOptimizationModule/src/genetic/case.cc
 	GeneticOptimizationModule/src/genetic/genetic.cc
 	GeneticOptimizationModule/src/genetic/geneticoperation.cc
 	GeneticOptimizationModule/src/genetic/mainloop.cc)
 
 set(HEADERS_GENETIC
-	GeneticOptimizationModule/include/genetic/case.h
 	GeneticOptimizationModule/include/genetic/genetic.h
 	GeneticOptimizationModule/include/genetic/geneticoperation.h
 	GeneticOptimizationModule/include/genetic/mainloop.h
@@ -213,24 +220,22 @@ target_link_libraries(${PROJECT_NAME}_genetic_train_test ${PROJECT_NAME}_genetic
 ##### Genetic tests:
 file(GLOB_RECURSE SRC_HEADERS_TEST_GENETIC
 	GeneticOptimizationModule/gtest_it/*.cc GeneticOptimizationModule/gtest_it/*.h)
-#file(GLOB_RECURSE SRC_HEADERS_TEST_IT GeneticOptimizationModule/gtest_it/*.cc GeneticOptimizationModule/gtest_it/*.h)
 
 ##### ProcessingModules tests:
 file(GLOB_RECURSE SRC_HEADERS_TEST_PROCESSING_MODULE 
 	ProcessingModules/gtest/*.cc ProcessingModules/gtest/*.h)
-#file(GLOB_RECURSE SRC_HEADERS_TEST_IT ProcessingModules/gtest_it/*.cc ProcessingModules/gtest_it/*.h)
+
+file(GLOB_RECURSE SRC_HEADERS_TEST_IT_PROCESSING_MODULE 
+	ProcessingModules/gtest_it/*.cc ProcessingModules/gtest_it/*.h)
 
 
-add_executable(g_test_genetic ${SRC_HEADERS_TEST_GENETIC})
-add_executable(g_test_processing_modules ${SRC_HEADERS_TEST_PROCESSING_MODULE})
+add_executable(gtest_genetic ${SRC_HEADERS_TEST_GENETIC})
+add_executable(gtest_processing_modules ${SRC_HEADERS_TEST_PROCESSING_MODULE})
+add_executable(gtest_it_processing_modules ${SRC_HEADERS_TEST_IT_PROCESSING_MODULE})
 
-#add_executable(g_test_it ${SRC_HEADERS_TEST_IT})
-
-
-target_link_libraries(g_test_genetic ${PROJECT_NAME}_genetic_train_test_lib utils_lib gtest gmock )
-target_link_libraries(g_test_processing_modules processing_lib utils_lib data_lib gtest gmock )
-#target_link_libraries(g_test_it ${PROJECT_NAME}_genetic_train_test_lib utils_lib gtest gmock)
-
+target_link_libraries(gtest_genetic ${PROJECT_NAME}_genetic_train_test_lib utils_lib gtest gmock )
+target_link_libraries(gtest_processing_modules processing_lib utils_lib data_lib gtest gmock )
+target_link_libraries(gtest_it_processing_modules data_lib utils_lib gtest gmock)
 
 ##### Test median2:
 #set(SRC_TEST_MEDIAN2 GeneticOptimizationModule/test_median2/main.cc)
