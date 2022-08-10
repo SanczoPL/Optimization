@@ -19,3 +19,6 @@
 [submodule "DlibModule"]
 	path = DlibModule
 	url = https://github.com/SanczoPL/DlibModule
+[submodule "PreprocessingData"]
+	path = PreprocessingData
+	url = https://github.com/grzegorzmatczak/PreprocessingData.git
